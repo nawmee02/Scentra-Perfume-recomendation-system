@@ -86,10 +86,37 @@ const Profile = ({ onLogout, onOrderAgain, handleAddToCart, handleAddToWishlist 
             reader.onload = async () => {
                 const base64 = reader.result;
                 setAvatar(base64);
-                // Optionally, add avatar update endpoint if needed
-                // await fetch("/api/users/avatar", { ... })
+                if (token) {
+                    try {
+                        await fetch("/api/users/avatar", {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ avatar: base64 })
+                        });
+                    } catch (err) {
+                        console.error("Failed to persist avatar:", err);
+                    }
+                }
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    // Remove item from wishlist
+    const handleRemoveWishlist = async (perfumeId) => {
+        try {
+            const res = await fetch(`/api/users/wishlist/${perfumeId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setWishlist(prev => prev.filter(item => item.id !== perfumeId));
+            }
+        } catch (err) {
+            console.error("Failed to remove from wishlist:", err);
         }
     };
 
@@ -470,22 +497,43 @@ const Profile = ({ onLogout, onOrderAgain, handleAddToCart, handleAddToWishlist 
             <div className="bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-full max-w-md border border-white/30">
                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
                     <Heart className="w-7 h-7 mr-2 text-amber-400" />
-                    Wishlist
+                    Wishlist ({wishlist.length})
                 </h3>
                 {loadingWishlist ? (
                     <div className="text-purple-100">Loading wishlist...</div>
                 ) : wishlist.length === 0 ? (
                     <div className="text-purple-200">No items in wishlist.</div>
                 ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
                         {wishlist.map((item) => (
-                            <div key={item.id} className="bg-white/10 rounded-xl p-5 flex flex-col md:flex-row md:items-center md:justify-between">
-                                <div>
-                                    <div className="text-white font-semibold">{item.name}</div>
-                                    <div className="text-purple-200 text-xs">{item.brand}</div>
+                            <div key={item.id} className="bg-white/10 rounded-xl p-4 flex flex-col gap-3">
+                                <div className="flex items-center gap-3">
+                                    {item.image_url && (
+                                        <img src={item.image_url} alt={item.name} className="w-12 h-12 object-cover rounded-lg" />
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-white font-semibold truncate">{item.name}</div>
+                                        <div className="text-purple-200 text-xs">{item.brand} · ${item.price}</div>
+                                    </div>
                                 </div>
-                                <div className="flex items-center mt-2 md:mt-0">
-                                    <span className="text-purple-200 text-xs mr-2">Added: {new Date(item.added_at).toLocaleDateString()}</span>
+                                <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                                    <button
+                                        onClick={() => handleRemoveWishlist(item.id)}
+                                        className="text-xs text-red-300 hover:text-red-200 transition"
+                                    >
+                                        Remove
+                                    </button>
+                                    <button
+                                        onClick={() => handleAddToCart && handleAddToCart(item)}
+                                        disabled={!item.inStock}
+                                        className={`text-xs px-3 py-1 rounded font-medium transition ${
+                                            item.inStock
+                                                ? 'bg-amber-400 hover:bg-amber-500 text-purple-950'
+                                                : 'bg-white/20 text-gray-300 cursor-not-allowed'
+                                        }`}
+                                    >
+                                        {item.inStock ? 'Add to Cart' : 'Out of Stock'}
+                                    </button>
                                 </div>
                             </div>
                         ))}

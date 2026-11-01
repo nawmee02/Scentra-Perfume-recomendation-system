@@ -388,6 +388,33 @@ Scent has a unique ability to evoke memories and influence emotions. This articl
     ];
 
     const [selectedPost, setSelectedPost] = useState(null);
+    const [posts, setPosts] = useState(blogPosts);
+
+    React.useEffect(() => {
+        fetch('/api/blog')
+            .then(r => r.json())
+            .then(data => {
+                if (data?.posts?.length) {
+                    const mapped = data.posts.map(p => ({
+                        id: p.id,
+                        title: p.title,
+                        excerpt: p.excerpt,
+                        author: p.author,
+                        date: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : '2025-01-15',
+                        readTime: p.read_time || '5 min read',
+                        category: p.category,
+                        image: p.image_url || 'https://images.pexels.com/photos/3685530/pexels-photo-3685530.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
+                        content: p.content,
+                    }));
+                    setPosts(prev => {
+                        const existingIds = new Set(prev.map(item => item.id));
+                        const fresh = mapped.filter(item => !existingIds.has(item.id));
+                        return fresh.length > 0 ? [...fresh, ...prev] : prev;
+                    });
+                }
+            })
+            .catch(() => {});
+    }, []);
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -454,7 +481,7 @@ Scent has a unique ability to evoke memories and influence emotions. This articl
                         {/* Main Content */}
                         <div className="lg:w-2/3">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {blogPosts.map(post => (
+                                {posts.map(post => (
                                     <article
                                         key={post.id}
                                         className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"

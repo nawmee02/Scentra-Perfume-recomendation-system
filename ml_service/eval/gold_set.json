@@ -1,0 +1,252 @@
+{
+  "_readme": "Starter ranking benchmark for Scentra. HAND-AUTHORED from fragrance-community consensus; edit freely. 'expected_families'/'excluded_families' use ONLY the canonical closed set in vocab.CANONICAL_FAMILIES. 'expected_perfumes' are graded 3/2/1 and only listed where a canonical answer exists; names absent from the catalog are skipped, not penalized. 'split': dev = tuning, test = holdout (touch only for final sign-off).",
+
+  "queries": [
+    {
+      "split": "dev", "query": "aventus", "query_type": "exact_name",
+      "expected_families": ["fruity", "woody", "smoky"],
+      "expected_perfumes": [{"name": "Aventus", "brand": "Creed", "grade": 3}]
+    },
+    {
+      "split": "dev", "query": "dior sauvage", "query_type": "exact_name",
+      "expected_families": ["aromatic", "fresh", "spicy", "amber"],
+      "expected_perfumes": [{"name": "Sauvage", "brand": "Dior", "grade": 3}]
+    },
+    {
+      "split": "dev", "query": "black opium", "query_type": "exact_name",
+      "expected_families": ["gourmand", "sweet", "vanilla", "floral"],
+      "expected_perfumes": [{"name": "Black Opium", "brand": "Yves Saint Laurent", "grade": 3}]
+    },
+    {
+      "split": "dev", "query": "fresh citrus office scent for summer, not sweet, no oud",
+      "query_type": "descriptive",
+      "expected_families": ["citrus", "aromatic", "fresh"],
+      "excluded_families": ["sweet", "gourmand", "oud"],
+      "context": {"occasion": "office", "season": "summer"},
+      "expected_perfumes": [
+        {"name": "Acqua di Gio", "brand": "Giorgio Armani", "grade": 3},
+        {"name": "Bleu de Chanel", "brand": "Chanel", "grade": 2},
+        {"name": "Light Blue", "brand": "Dolce&Gabbana", "grade": 1}
+      ]
+    },
+    {
+      "split": "dev", "query": "dark smoky vetiver for the evening",
+      "query_type": "descriptive",
+      "expected_families": ["woody", "smoky", "green"],
+      "expected_perfumes": [
+        {"name": "Encre Noire", "brand": "Lalique", "grade": 3},
+        {"name": "Sycomore", "brand": "Chanel", "grade": 3},
+        {"name": "Grey Vetiver", "brand": "Tom Ford", "grade": 2},
+        {"name": "Terre d'Hermes", "brand": "Hermes", "grade": 1}
+      ]
+    },
+    {
+      "split": "dev", "query": "sweet vanilla gourmand for cold winter nights",
+      "query_type": "season_occasion",
+      "expected_families": ["sweet", "gourmand", "vanilla", "amber"],
+      "context": {"season": "winter"},
+      "expected_perfumes": [
+        {"name": "Spicebomb Extreme", "brand": "Viktor&Rolf", "grade": 2},
+        {"name": "Angel", "brand": "Mugler", "grade": 1}
+      ]
+    },
+    {
+      "split": "dev", "query": "clean soapy fresh musk, nothing sweet",
+      "query_type": "descriptive",
+      "expected_families": ["fresh", "musky", "aromatic"],
+      "excluded_families": ["sweet", "gourmand"]
+    },
+    {
+      "split": "dev", "query": "cheap versatile crowd pleaser for everyday under 50",
+      "query_type": "budget",
+      "expected_families": ["fresh", "citrus", "woody", "aromatic"],
+      "context": {"budget": 50}
+    },
+    {
+      "split": "dev", "query": "elegant powdery floral for women",
+      "query_type": "descriptive",
+      "expected_families": ["floral", "powdery"],
+      "context": {"gender": "women"}
+    },
+    {
+      "split": "dev", "query": "smoky leather oud for a night out",
+      "query_type": "descriptive",
+      "expected_families": ["leather", "smoky", "oud", "woody"]
+    },
+    {
+      "split": "dev", "query": "aquatic marine summer beach scent",
+      "query_type": "season_occasion",
+      "expected_families": ["aquatic", "fresh", "citrus"],
+      "context": {"season": "summer"},
+      "expected_perfumes": [
+        {"name": "Cool Water", "brand": "Davidoff", "grade": 2},
+        {"name": "Acqua di Gio", "brand": "Giorgio Armani", "grade": 2}
+      ]
+    },
+    {
+      "split": "dev", "query": "spicy warm masculine for winter, no citrus",
+      "query_type": "descriptive",
+      "expected_families": ["spicy", "woody", "amber"],
+      "excluded_families": ["citrus"],
+      "context": {"season": "winter", "gender": "men"}
+    },
+    {
+      "split": "dev", "query": "unique niche rose and oud",
+      "query_type": "descriptive",
+      "expected_families": ["floral", "oud", "woody"]
+    },
+    {
+      "split": "dev", "query": "office friendly woody aromatic, not too sweet",
+      "query_type": "season_occasion",
+      "expected_families": ["woody", "aromatic", "fresh"],
+      "excluded_families": ["sweet", "gourmand"],
+      "context": {"occasion": "office"}
+    },
+    {
+      "split": "dev", "query": "fruity floral feminine for spring daytime",
+      "query_type": "descriptive",
+      "expected_families": ["fruity", "floral", "fresh"],
+      "context": {"season": "spring", "gender": "women"}
+    },
+    {
+      "split": "dev", "query": "affordable vanilla gourmand under 40",
+      "query_type": "budget",
+      "expected_families": ["vanilla", "gourmand", "sweet"],
+      "context": {"budget": 40}
+    },
+    {
+      "split": "dev", "query": "green fresh herbal outdoorsy scent",
+      "query_type": "descriptive",
+      "expected_families": ["green", "fresh", "aromatic", "citrus"]
+    },
+    {
+      "split": "dev", "query": "powdery iris for a formal elegant occasion",
+      "query_type": "season_occasion",
+      "expected_families": ["powdery", "floral", "woody"],
+      "context": {"occasion": "formal"}
+    },
+    {
+      "split": "dev", "query": "long lasting beast mode sweet fragrance for clubbing",
+      "query_type": "season_occasion",
+      "expected_families": ["sweet", "gourmand", "amber", "spicy"],
+      "context": {"occasion": "club"}
+    },
+    {
+      "split": "dev", "query": "warm amber spicy for autumn, no aquatic",
+      "query_type": "descriptive",
+      "expected_families": ["amber", "spicy", "woody"],
+      "excluded_families": ["aquatic"],
+      "context": {"season": "autumn"}
+    },
+
+    {
+      "split": "dev", "query": "office scent", "query_type": "season_occasion",
+      "_borderline": "broad — many styles are office-appropriate; must NOT collapse to citrus-only",
+      "expected_families": ["fresh", "citrus", "aromatic", "woody", "powdery", "musky"],
+      "context": {"occasion": "office"}
+    },
+    {
+      "split": "dev", "query": "date night fragrance", "query_type": "season_occasion",
+      "_borderline": "broad — warm styles of many kinds work for dates",
+      "expected_families": ["amber", "sweet", "spicy", "woody", "leather", "musky", "vanilla"],
+      "context": {"occasion": "date"}
+    },
+    {
+      "split": "dev", "query": "office fragrance, slightly sweet is fine",
+      "query_type": "season_occasion",
+      "_borderline": "tension — sweet explicitly ALLOWED; occasion heuristic must not suppress it",
+      "expected_families": ["fresh", "aromatic", "woody", "sweet", "citrus"],
+      "context": {"occasion": "office"}
+    },
+    {
+      "split": "dev", "query": "versatile for office or a date",
+      "query_type": "season_occasion",
+      "_borderline": "tension — restrained (office) vs warm (date) pull opposite ways",
+      "expected_families": ["woody", "aromatic", "fresh", "amber", "spicy"],
+      "context": {"occasion": "office"}
+    },
+    {
+      "split": "dev", "query": "winter office scent", "query_type": "season_occasion",
+      "_borderline": "tension — winter pulls heavy, office pulls restrained",
+      "expected_families": ["woody", "amber", "spicy", "aromatic", "powdery"],
+      "context": {"occasion": "office", "season": "winter"}
+    },
+    {
+      "split": "dev", "query": "cozy but office-appropriate scent",
+      "query_type": "season_occasion",
+      "_borderline": "tension — cozy (warm/sweet) vs office (restrained)",
+      "expected_families": ["woody", "amber", "vanilla", "powdery", "musky"],
+      "context": {"occasion": "office"}
+    },
+    {
+      "split": "dev", "query": "good everyday fragrance", "query_type": "descriptive",
+      "_borderline": "broad — near-universal query; diversity matters more than any single family",
+      "expected_families": ["fresh", "citrus", "woody", "aromatic", "musky", "fruity"]
+    },
+    {
+      "split": "dev", "query": "summer date scent", "query_type": "season_occasion",
+      "_borderline": "tension — summer pulls fresh, date pulls warm",
+      "expected_families": ["citrus", "fresh", "amber", "sweet", "fruity", "aquatic"],
+      "context": {"occasion": "date", "season": "summer"}
+    },
+
+    {
+      "split": "test", "query": "acqua di gio", "query_type": "exact_name",
+      "expected_families": ["aquatic", "citrus", "aromatic"],
+      "expected_perfumes": [{"name": "Acqua di Gio", "brand": "Giorgio Armani", "grade": 3}]
+    },
+    {
+      "split": "test", "query": "fresh citrus crowd pleaser for the office, not sweet",
+      "query_type": "descriptive",
+      "expected_families": ["citrus", "fresh", "aromatic"],
+      "excluded_families": ["sweet", "gourmand"],
+      "context": {"occasion": "office"}
+    },
+    {
+      "split": "test", "query": "warm spicy amber for a date night",
+      "query_type": "season_occasion",
+      "expected_families": ["amber", "spicy", "sweet", "woody"],
+      "context": {"occasion": "date"}
+    },
+    {
+      "split": "test", "query": "smoky incense woody and meditative",
+      "query_type": "descriptive",
+      "expected_families": ["smoky", "woody"]
+    },
+    {
+      "split": "test", "query": "similar to dior sauvage", "query_type": "similarity",
+      "expected_families": ["aromatic", "fresh", "spicy", "amber"]
+    },
+    {
+      "split": "test", "query": "sweet fruity for women in summer, no oud",
+      "query_type": "descriptive",
+      "expected_families": ["fruity", "sweet", "floral"],
+      "excluded_families": ["oud"],
+      "context": {"season": "summer", "gender": "women"}
+    },
+    {
+      "split": "test", "query": "budget long lasting scent under 60",
+      "query_type": "budget",
+      "expected_families": ["woody", "amber", "sweet", "spicy"],
+      "context": {"budget": 60}
+    },
+    {
+      "split": "test", "query": "clean fresh aquatic for the gym, daily",
+      "query_type": "season_occasion",
+      "expected_families": ["fresh", "aquatic", "citrus"],
+      "context": {"occasion": "gym"}
+    },
+    {
+      "split": "test", "query": "leathery tobacco masculine for autumn",
+      "query_type": "descriptive",
+      "expected_families": ["leather", "smoky", "woody"],
+      "context": {"season": "autumn", "gender": "men"}
+    },
+    {
+      "split": "test", "query": "elegant white floral for a wedding, formal",
+      "query_type": "season_occasion",
+      "expected_families": ["floral", "powdery", "fresh"],
+      "context": {"occasion": "formal"}
+    }
+  ]
+}

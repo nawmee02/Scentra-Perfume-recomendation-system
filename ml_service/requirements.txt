@@ -1,6 +1,13 @@
 fastapi
 uvicorn[standard]
 sentence-transformers
-faiss-cpu
 numpy
 pandas
+httpx
+apscheduler
+duckduckgo-search==6.3.7
+rapidfuzz
+qdrant-client[local]==1.11.3
+curl_cffi>=0.7.0
+beautifulsoup4
+lxml

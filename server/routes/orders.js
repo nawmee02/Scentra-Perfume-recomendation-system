@@ -196,4 +196,35 @@ router.get('/', authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// Cancel order
+router.put('/:id/cancel', authenticateToken, async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user.id;
+
+    const order = await dbGet('SELECT * FROM orders WHERE id = ?', [orderId]);
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (order.user_id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Unauthorized to cancel this order' });
+    }
+
+    if (order.status !== 'pending') {
+      return res.status(400).json({ error: `Cannot cancel an order with status: ${order.status}` });
+    }
+
+    await dbRun(
+      'UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      ['cancelled', orderId]
+    );
+
+    res.json({ message: 'Order cancelled successfully', orderId });
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;

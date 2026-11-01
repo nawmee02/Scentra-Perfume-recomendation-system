@@ -51,9 +51,44 @@ export async function initializeDatabase() {
         password TEXT NOT NULL,
         role TEXT DEFAULT 'user',
         avatar TEXT,
+        preferences TEXT,
         favourite_Scent TEXT,
+        reset_otp TEXT,
+        reset_otp_expiry INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Ensure all user columns exist on legacy databases
+    try {
+      const userCols = await dbAll('PRAGMA table_info(users)');
+      const colNames = userCols.map(c => c.name);
+      if (!colNames.includes('preferences')) {
+        await dbRun('ALTER TABLE users ADD COLUMN preferences TEXT');
+      }
+      if (!colNames.includes('reset_otp')) {
+        await dbRun('ALTER TABLE users ADD COLUMN reset_otp TEXT');
+      }
+      if (!colNames.includes('reset_otp_expiry')) {
+        await dbRun('ALTER TABLE users ADD COLUMN reset_otp_expiry INTEGER');
+      }
+    } catch (e) {
+      console.warn('User table migration warning:', e.message);
+    }
+
+    // Cart table
+    await dbRun(`
+      CREATE TABLE IF NOT EXISTS cart (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        session_id TEXT,
+        perfume_id INTEGER NOT NULL,
+        quantity INTEGER NOT NULL DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id),
+        FOREIGN KEY (perfume_id) REFERENCES perfumes (id)
       )
     `);
 
@@ -310,6 +345,3 @@ async function insertSampleData() {
   }
 }
 
-// Remove or comment out these lines after the columns are added once:
-// await dbRun(`ALTER TABLE users ADD COLUMN reset_otp TEXT`);
-// await dbRun(`ALTER TABLE users ADD COLUMN reset_otp_expiry INTEGER`);

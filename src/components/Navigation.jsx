@@ -1,7 +1,8 @@
-import React from 'react';
-import { Home, Search, Flower2, BookOpen, ShoppingBag, User, LogOut,ShoppingCart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Home, Search, Flower2, BookOpen, ShoppingBag, User, LogOut, ShoppingCart, Menu, X } from 'lucide-react';
 
-const Navigation = ({ activeSection, setActiveSection, isLoggedIn, onLogout,cartCount, onCartClick }) => {
+const Navigation = ({ activeSection, setActiveSection, isLoggedIn, onLogout, cartCount, onCartClick }) => {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navItems = [
         { id: 'home', label: 'Home', icon: Home },
         { id: 'perfumefind', label: 'Perfume Find', icon: Search },
@@ -89,13 +90,90 @@ const Navigation = ({ activeSection, setActiveSection, isLoggedIn, onLogout,cart
                     </div>
 
                     <div className="md:hidden">
-                        <button className="p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-purple-50">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="p-2 rounded-lg text-gray-600 hover:text-purple-600 hover:bg-purple-50"
+                            aria-label="Toggle menu"
+                        >
+                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
                     </div>
                 </div>
+
+                {/* Mobile Dropdown Menu */}
+                {mobileMenuOpen && (
+                    <div className="md:hidden border-t border-purple-100 py-3 space-y-1 bg-white/95 backdrop-blur-md px-2">
+                        {navItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                        if (item.id === 'cart') {
+                                            onCartClick && onCartClick();
+                                        } else {
+                                            setActiveSection(item.id);
+                                        }
+                                    }}
+                                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all ${
+                                        activeSection === item.id
+                                            ? 'bg-purple-100 text-purple-700 font-semibold'
+                                            : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
+                                    }`}
+                                >
+                                    <div className="flex items-center space-x-3">
+                                        <Icon className="w-5 h-5" />
+                                        <span>{item.label}</span>
+                                    </div>
+                                    {item.id === 'cart' && cartCount > 0 && (
+                                        <span className="bg-amber-500 text-white text-xs rounded-full px-2 py-0.5">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
+
+                        <div className="pt-2 border-t border-purple-50">
+                            {isLoggedIn ? (
+                                <div className="space-y-1">
+                                    <button
+                                        onClick={() => {
+                                            setMobileMenuOpen(false);
+                                            setActiveSection('profile');
+                                        }}
+                                        className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-700 hover:bg-purple-50"
+                                    >
+                                        <User className="w-5 h-5" />
+                                        <span>Profile</span>
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setMobileMenuOpen(false);
+                                            onLogout && onLogout();
+                                        }}
+                                        className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-red-600 hover:bg-red-50"
+                                    >
+                                        <LogOut className="w-5 h-5" />
+                                        <span>Log Out</span>
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                        setActiveSection('login');
+                                    }}
+                                    className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700"
+                                >
+                                    <User className="w-5 h-5" />
+                                    <span>Log In</span>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </nav>
     );

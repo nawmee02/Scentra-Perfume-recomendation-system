@@ -36,3 +36,19 @@ export const requireAdmin = (req, res, next) => {
 export const generateToken = (userId) => {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
 };
+export const optionalAuth = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await dbGet('SELECT id, name, email, role FROM users WHERE id = ?', [decoded.userId]);
+    req.user = user || null;
+  } catch {
+    req.user = null;
+  }
+  next();
+};

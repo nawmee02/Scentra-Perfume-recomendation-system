@@ -129,10 +129,13 @@ router.get('/wishlist', authenticateToken, async (req, res) => {
   }
 });
 
-// Add to wishlist
-router.post('/wishlist/:perfumeId', authenticateToken, async (req, res) => {
+// Add to wishlist (supports both :perfumeId param and body { perfumeId })
+router.post('/wishlist/:perfumeId?', authenticateToken, async (req, res) => {
   try {
-    const { perfumeId } = req.params;
+    const perfumeId = req.params.perfumeId || req.body?.perfumeId;
+    if (!perfumeId) {
+      return res.status(400).json({ error: 'perfumeId is required' });
+    }
     const userId = req.user.id;
 
     // Check if perfume exists
@@ -164,10 +167,13 @@ router.post('/wishlist/:perfumeId', authenticateToken, async (req, res) => {
   }
 });
 
-// Remove from wishlist
-router.delete('/wishlist/:perfumeId', authenticateToken, async (req, res) => {
+// Remove from wishlist (supports both :perfumeId param and body { perfumeId })
+router.delete('/wishlist/:perfumeId?', authenticateToken, async (req, res) => {
   try {
-    const { perfumeId } = req.params;
+    const perfumeId = req.params.perfumeId || req.body?.perfumeId;
+    if (!perfumeId) {
+      return res.status(400).json({ error: 'perfumeId is required' });
+    }
     const userId = req.user.id;
 
     await dbRun(
@@ -214,6 +220,57 @@ router.get('/orders', authenticateToken, async (req, res) => {
     res.json(formattedOrders);
   } catch (error) {
     console.error('Error fetching user orders:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Cancel user order
+router.put('/orders/:id/cancel', authenticateToken, async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user.id;
+
+    const order = await dbGet('SELECT * FROM orders WHERE id = ?', [orderId]);
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (order.user_id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Unauthorized to cancel this order' });
+    }
+
+    if (order.status !== 'pending') {
+      return res.status(400).json({ error: `Cannot cancel an order with status: ${order.status}` });
+    }
+
+    await dbRun(
+      'UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      ['cancelled', orderId]
+    );
+
+    res.json({ message: 'Order cancelled successfully', orderId });
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update user avatar
+router.put('/avatar', authenticateToken, async (req, res) => {
+  try {
+    const { avatar } = req.body;
+    if (!avatar) {
+      return res.status(400).json({ error: 'Avatar data required' });
+    }
+
+    await dbRun(
+      'UPDATE users SET avatar = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [avatar, req.user.id]
+    );
+
+    res.json({ message: 'Avatar updated successfully', avatar });
+  } catch (error) {
+    console.error('Error updating avatar:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

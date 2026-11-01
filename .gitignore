@@ -23,3 +23,19 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.kilo/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# ML generated data & caches
+ml_service/data/qdrant/
+ml_service/data/pw_profile/
+ml_service/data/*.db
+ml_service/data/*.db-shm
+ml_service/data/*.db-wal
+ml_service/data/embeddings.npy
+ml_service/data/faiss.index

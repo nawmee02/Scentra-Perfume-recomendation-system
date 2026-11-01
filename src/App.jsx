@@ -87,7 +87,7 @@ function App() {
             case 'home':
                 return <Hero setActiveSection={setActiveSection} />;
             case 'perfumefind':
-                return <PerfumeFinder />;
+                return <PerfumeFinder onAddToCart={handleAddToCart} />;
             case 'notes':
                 return <Notes />;
             case 'blog':

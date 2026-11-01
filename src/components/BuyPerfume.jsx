@@ -55,48 +55,13 @@ export default function BuyPerfume({ setActiveSection, handleAddToCart }) {
       .finally(() => setLoading(false));
   }, [page, sortBy, brand, category, minPrice, maxPrice]);
 
-  // Fetch cart from backend on mount
-  useEffect(() => {
-    fetch('http://localhost:3001/api/cart')
-      .then(r => r.json())
-      .then(setCart)
-      .catch(() => {});
-  }, []);
-
-  // Add to cart handler
-  const handleAddToCartLocal = async (product) => {
-    try {
-      const response = await fetch('http://localhost:3001/api/cart/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ perfumeId: product.id, quantity: 1 })
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        alert(data.error || 'Failed to add to cart');
-        return;
-      }
-      // Refetch cart to update UI
-      fetch('http://localhost:3001/api/cart')
-        .then(r => r.json())
-        .then(setCart);
-      setCartMessage(`${product.name} added to cart!`);
-      setTimeout(() => setCartMessage(''), 2000);
-      // Optionally, refetch products to update inStock
-      fetch(`/api/perfumes?${new URLSearchParams({
-        page,
-        limit,
-        sortBy,
-        brand,
-        category,
-        minPrice,
-        maxPrice
-      }).toString()}`)
-        .then(r => r.json())
-        .then(({ perfumes }) => setPerfumes(perfumes));
-    } catch (err) {
-      alert('Error connecting to server');
+  // Wrapper to add item to cart and show feedback
+  const onAddToCart = (product) => {
+    if (handleAddToCart) {
+      handleAddToCart(product);
     }
+    setCartMessage(`${product.name} added to cart!`);
+    setTimeout(() => setCartMessage(''), 2500);
   };
 
   // Add to wishlist handler
@@ -181,7 +146,7 @@ export default function BuyPerfume({ setActiveSection, handleAddToCart }) {
             )}
           </div>
           <button
-            onClick={() => handleAddToCart(p)}
+            onClick={() => onAddToCart(p)}
             disabled={!p.inStock}
             className={`flex items-center space-x-1 px-3 py-1 rounded ${
               p.inStock

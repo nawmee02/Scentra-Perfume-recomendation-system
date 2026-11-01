@@ -9,7 +9,8 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '/api': 'http://localhost:3001'
+            // Backend Express server (server/index.js listens on PORT=5000 from .env)
+            '/api': 'http://localhost:5000'
         }
     }
 });
