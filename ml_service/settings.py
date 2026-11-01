@@ -118,8 +118,8 @@ class Settings:
         "PLAYWRIGHT_PROFILE", str(_HERE / "data" / "pw_profile"))
 
     # --- Crawler ---
-    SCRAPE_DELAY_MIN: float = _float("SCRAPE_DELAY_MIN", 8.0)
-    SCRAPE_DELAY_MAX: float = _float("SCRAPE_DELAY_MAX", 12.0)
+    SCRAPE_DELAY_MIN: float = _float("SCRAPE_DELAY_MIN", 2.5)
+    SCRAPE_DELAY_MAX: float = _float("SCRAPE_DELAY_MAX", 4.5)
     SCRAPE_BACKOFF_MIN: float = _float("SCRAPE_BACKOFF_MIN", 20.0)
     SCRAPE_BACKOFF_MAX: float = _float("SCRAPE_BACKOFF_MAX", 30.0)
     SCRAPE_BATCH_SIZE: int = _int("SCRAPE_BATCH_SIZE", 40)

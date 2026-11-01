@@ -347,7 +347,7 @@ async def scrape_batch(batch_size: int = 100) -> int:
                 html = await playwright_fetch.render_html(url)
             if not html:
                 db.mark_target_failed(url, "fetch failed")
-                await asyncio.sleep(random.uniform(20, 30))  # backoff on block / 429
+                await asyncio.sleep(random.uniform(settings.SCRAPE_BACKOFF_MIN, settings.SCRAPE_BACKOFF_MAX))  # backoff
                 continue
         try:
             rec = _parse_perfume(html, url)
@@ -369,7 +369,7 @@ async def scrape_batch(batch_size: int = 100) -> int:
                 scraped += 1
         except Exception as e:
             db.mark_target_failed(url, str(e))
-        await asyncio.sleep(random.uniform(8, 12))  # politeness delay (tunable)
+        await asyncio.sleep(random.uniform(settings.SCRAPE_DELAY_MIN, settings.SCRAPE_DELAY_MAX))  # politeness delay
 
     if scraped:
         await qdrant_store.sync_unsynced()

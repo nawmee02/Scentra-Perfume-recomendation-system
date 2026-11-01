@@ -599,7 +599,7 @@ def enqueue_url(url: str, brand: str | None = None, is_new: bool = False) -> Non
 
 def get_pending_targets(limit: int = 100) -> list[dict]:
     rows = get_connection().execute(
-        "SELECT * FROM scrape_targets WHERE status = 'pending' AND attempts < 3 LIMIT ?",
+        "SELECT * FROM scrape_targets WHERE status = 'pending' AND attempts < 3 ORDER BY is_new DESC, attempts ASC, discovered_at DESC LIMIT ?",
         (limit,),
     ).fetchall()
     return [dict(r) for r in rows]
