@@ -157,7 +157,7 @@ async def run(query: str, k: int | None = None, mods: dict | None = None) -> dic
     # --- Retrieve by intent ---
     seed = None
     if kind == "similar":
-        result = await relationship_service.find_similar(target, k=max(k, 8))
+        result = await relationship_service.find_similar(target, k=max(k, 8), budget=cons.budget, query=query)
         recs, seed = result["similar"], result["seed"]
         meta["similar_source"] = result["source"]
         if not recs:  # resolver missed → semantic fallback on the full query
